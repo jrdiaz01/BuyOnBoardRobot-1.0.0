@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="BuyOnBoardRobot-1.0.0" default="GENERATE" basedir=".">
+
+    <property file="build.properties" />
+
+    <path id="classpath">
+        <fileset dir="${lib.dir.app}"   includes="**/**.jar" />
+    </path>
+
+    <target name="GENERATE">
+        <antcall target="PREPARE WORKSPACE" />
+        <antcall target="COMPILE" />
+        <antcall target="CLEAN" />
+    </target>
+
+    <target name="PREPARE WORKSPACE" >
+		<delete dir="${dist.bin.dir}" />
+		<delete dir="${dist.lib.dir}" />
+		<delete dir="${dist.conf.dir}" />
+		<delete dir="${dist.log.dir}" />
+    	<delete dir="${dist.sh.dir}" />
+    	<delete dir="${dist.tmp.dir}" />
+
+        <mkdir dir="${dist.bin.dir}" />
+        <mkdir dir="${dist.lib.dir}" />
+        <mkdir dir="${dist.conf.dir}" />
+        <mkdir dir="${dist.log.dir}" />
+    	<mkdir dir="${dist.sh.dir}" />
+    	<mkdir dir="${dist.tmp.dir}" />
+
+        <copy todir="${dist.lib.dir}">
+            <fileset dir="lib" includes="**/**.jar" />
+        </copy>
+        <copy todir="${dist.conf.dir}">
+            <fileset dir="config" includes="**/**.*" />
+        </copy>
+        <copy todir="${dist.sh.dir}">
+            <fileset dir="sh" includes="**/**.*" />
+        </copy>
+    </target>
+
+    <target name="COMPILE" >
+        <javac
+            srcdir="src"
+            destdir="${dist.bin.dir}"
+            classpathref="classpath"
+            debug="true"
+            deprecation="false"
+            nowarn="true"
+            source="1.8"
+            target="1.8"
+            fork="yes"
+            executable="${jdk.home}/bin/javac.exe"
+			includeantruntime="false">
+        </javac>
+		
+		<copy todir="dist/bin">
+            <fileset dir="src" includes="**/**.xml" />
+        </copy>
+
+        <delete dir="dist/${app.name}-${app.version}.jar" />
+
+        <jar
+            jarfile="dist/${app.name}-${app.version}.jar"
+            basedir="dist/bin" >
+        </jar>
+    </target>
+
+    <target name="CLEAN" >
+        <delete dir="${dist.bin.dir}" />
+    </target>
+
+</project>
